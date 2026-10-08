@@ -1,4 +1,4 @@
-const CACHE_NAME = 'little-pause-v1';
+const CACHE_NAME = 'little-pause-v2';
 const APP_SHELL = [
   './',
   './index.html',

@@ -37,7 +37,7 @@ function render() {
   timeDisplay.textContent = formatTime(remaining);
   timeDisplay.setAttribute('aria-label', `${Math.floor(remaining / 60)} minutes ${remaining % 60} seconds`);
   ring.style.strokeDashoffset = ringLength * (1 - remaining / (settings[mode] * 60));
-  document.title = `${formatTime(remaining)} · ${mode === 'focus' ? 'Focus' : 'Break'} — little pause`;
+  document.title = `${formatTime(remaining)} · ${mode === 'focus' ? 'Focus' : 'Break'} — Pomodoro`;
   $('#mode-kicker').textContent = labels[mode];
   $('#clock-caption').textContent = captions[mode];
   $('#start-label').textContent = running ? 'Pause session' : startLabels[mode];
@@ -112,7 +112,7 @@ function completeSession() {
   const completedMode = mode;
   $('#encouragement').textContent = completedMode === 'focus' ? 'Lovely work. Take a moment to stretch.' : 'All recharged? Ready when you are.';
   chime();
-  notify(completedMode === 'focus' ? 'Focus session complete' : 'Break is over', completedMode === 'focus' ? 'You did it. Time for a little pause.' : 'Ready to focus again when you are.');
+  notify(completedMode === 'focus' ? 'Focus session complete' : 'Break is over', completedMode === 'focus' ? 'You did it. Time to take a break.' : 'Ready to focus again when you are.');
   const autoStartNext = completedMode === 'focus' ? settings.autoBreak : settings.autoFocus;
   setMode(nextMode, autoStartNext);
   if (!autoStartNext) {

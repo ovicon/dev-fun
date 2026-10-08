@@ -1,4 +1,4 @@
-# Little Pause
+# Pomodoro
 
 A small, installable Pomodoro timer. It works offline after its first successful load and keeps timer settings and today's completed focus sessions in local browser storage.
 
