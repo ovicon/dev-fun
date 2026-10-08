@@ -1,4 +1,4 @@
-const DEFAULTS = { focus: 25, short: 5, long: 15, autoBreak: false, autoFocus: false };
+const DEFAULTS = { focus: 25, short: 5, long: 15, dailyGoal: 4, autoBreak: false, autoFocus: false };
 const labels = { focus: 'YOUR FOCUS SESSION', short: 'A LITTLE BREATHER', long: 'A WELL-DESERVED REST' };
 const captions = { focus: 'TIME TO FOCUS', short: 'TAKE A BREATH', long: 'STEP AWAY A WHILE' };
 const startLabels = { focus: 'Start focus', short: 'Start break', long: 'Start long break' };
@@ -43,7 +43,12 @@ function render() {
   $('#start-label').textContent = running ? 'Pause session' : startLabels[mode];
   $('#start-icon').textContent = running ? 'Ⅱ' : '▶';
   $('#session-count').textContent = sessions.count;
-  $('#session-dots').querySelectorAll('i').forEach((dot, index) => dot.classList.toggle('done', index < sessions.count % 4 || (sessions.count > 0 && sessions.count % 4 === 0)));
+  $('#session-target').textContent = settings.dailyGoal;
+  $('#session-dots').replaceChildren(...Array.from({ length: settings.dailyGoal }, (_, index) => {
+    const dot = document.createElement('i');
+    dot.classList.toggle('done', index < sessions.count);
+    return dot;
+  }));
   panel.dataset.mode = mode;
   document.body.dataset.mode = mode;
   saveTimer();
@@ -107,8 +112,8 @@ function completeSession() {
   running = false;
   stopInterval();
   remaining = 0;
-  let nextMode = mode === 'focus' ? (sessions.count > 0 && sessions.count % 4 === 3 ? 'long' : 'short') : 'focus';
   if (mode === 'focus') { sessions.count += 1; saveSessions(); }
+  const nextMode = mode === 'focus' ? getNextBreakMode() : 'focus';
   const completedMode = mode;
   $('#encouragement').textContent = completedMode === 'focus' ? 'Lovely work. Take a moment to stretch.' : 'All recharged? Ready when you are.';
   chime();
@@ -126,8 +131,11 @@ function tick() {
   else render();
 }
 function skipSession() {
-  const next = mode === 'focus' ? (sessions.count > 0 && sessions.count % 4 === 3 ? 'long' : 'short') : 'focus';
+  const next = mode === 'focus' ? getNextBreakMode() : 'focus';
   setMode(next);
+}
+function getNextBreakMode() {
+  return sessions.count > 0 && sessions.count % 4 === 0 ? 'long' : 'short';
 }
 
 $('#start-button').addEventListener('click', start);
@@ -144,6 +152,7 @@ $('#settings-open').addEventListener('click', () => {
   $('#focus-setting').value = settings.focus;
   $('#short-setting').value = settings.short;
   $('#long-setting').value = settings.long;
+  $('#goal-setting').value = settings.dailyGoal;
   $('#auto-break-setting').checked = Boolean(settings.autoBreak);
   $('#auto-focus-setting').checked = Boolean(settings.autoFocus);
   updateNotificationButton();
@@ -154,9 +163,10 @@ $('#settings-form').addEventListener('submit', event => {
   event.preventDefault();
   const updated = {
     focus: Number($('#focus-setting').value), short: Number($('#short-setting').value), long: Number($('#long-setting').value),
+    dailyGoal: Number($('#goal-setting').value),
     autoBreak: $('#auto-break-setting').checked, autoFocus: $('#auto-focus-setting').checked
   };
-  if (updated.focus < 1 || updated.focus > 90 || updated.short < 1 || updated.short > 30 || updated.long < 1 || updated.long > 60) return;
+  if (updated.focus < 1 || updated.focus > 90 || updated.short < 1 || updated.short > 30 || updated.long < 1 || updated.long > 60 || updated.dailyGoal < 1 || updated.dailyGoal > 20) return;
   settings = updated;
   localStorage.setItem('little-pause-settings', JSON.stringify(settings));
   running = false; stopInterval(); remaining = settings[mode] * 60;
