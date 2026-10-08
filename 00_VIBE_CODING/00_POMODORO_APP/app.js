@@ -205,14 +205,45 @@ if (savedTimer && ['focus', 'short', 'long'].includes(savedTimer.mode)) {
 render();
 if (savedTimer?.running && savedTimer.deadline <= Date.now()) completeSession();
 
+const installButton = $('#install-button');
+const installHelp = $('#install-help');
+function isInstalled() {
+  return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+}
+function updateInstallButton() {
+  if (isInstalled()) {
+    installButton.disabled = true;
+    installButton.textContent = 'Installed ✓';
+    installHelp.hidden = true;
+  } else {
+    installButton.disabled = false;
+    installButton.innerHTML = 'Install app <span>↓</span>';
+  }
+}
 window.addEventListener('beforeinstallprompt', event => {
-  event.preventDefault(); installPrompt = event; $('#install-button').hidden = false;
+  event.preventDefault();
+  installPrompt = event;
+  installHelp.hidden = true;
+  updateInstallButton();
 });
-$('#install-button').addEventListener('click', async () => {
-  if (!installPrompt) return;
-  installPrompt.prompt(); await installPrompt.userChoice; installPrompt = null; $('#install-button').hidden = true;
+installButton.addEventListener('click', async () => {
+  if (isInstalled()) return;
+  if (installPrompt) {
+    const promptEvent = installPrompt;
+    await promptEvent.prompt();
+    const { outcome } = await promptEvent.userChoice;
+    installPrompt = null;
+    installHelp.textContent = outcome === 'accepted' ? 'Installing Pomodoro…' : 'You can install it later from your browser menu.';
+  } else if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+    installHelp.textContent = 'Open this app from localhost or a secure HTTPS site to install it.';
+  } else {
+    installHelp.textContent = 'Open your browser menu and choose “Install app” or “Add to Home Screen”.';
+  }
+  installHelp.hidden = false;
+  updateInstallButton();
 });
-window.addEventListener('appinstalled', () => { $('#install-button').hidden = true; });
+window.addEventListener('appinstalled', updateInstallButton);
+updateInstallButton();
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
   window.addEventListener('load', () => navigator.serviceWorker.register('service-worker.js').catch(error => console.warn('Service worker registration failed:', error)));
 }
