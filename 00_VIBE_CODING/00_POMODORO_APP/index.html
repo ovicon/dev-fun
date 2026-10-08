@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5f0">
+  <meta name="description" content="A calm, simple Pomodoro timer for focused work and restorative breaks.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <title>Pomodoro — make room for focus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Pomodoro home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span>little<span class="brand-light"> pause</span></span>
+      </a>
+      <div class="header-note"><span class="status-dot"></span> A little progress goes a long way</div>
+      <button class="icon-button" id="settings-open" aria-label="Open timer settings" title="Timer settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8Z"/><path d="m19.4 13.5 1.1.9-1.1 1.9-1.4-.5a7.7 7.7 0 0 1-1.4.8l-.3 1.5h-2.2l-.3-1.5a7.7 7.7 0 0 1-1.4-.8l-1.4.5-1.1-1.9 1.1-.9a6.7 6.7 0 0 1 0-1.6l-1.1-.9 1.1-1.9 1.4.5a7.7 7.7 0 0 1 1.4-.8l.3-1.5h2.2l.3 1.5a7.7 7.7 0 0 1 1.4.8l1.4-.5 1.1 1.9-1.1.9a6.7 6.7 0 0 1 0 1.6Z"/></svg>
+      </button>
+    </header>
+
+    <section class="workspace">
+      <div class="timer-panel" id="timer-panel" data-mode="focus">
+        <div class="eyebrow"><span class="eyebrow-line"></span><span id="mode-kicker">YOUR FOCUS SESSION</span><span class="eyebrow-line"></span></div>
+        <div class="mode-switch" role="tablist" aria-label="Timer mode">
+          <button class="mode-button active" data-mode="focus" role="tab" aria-selected="true">Focus</button>
+          <button class="mode-button" data-mode="short" role="tab" aria-selected="false">Short break</button>
+          <button class="mode-button" data-mode="long" role="tab" aria-selected="false">Long break</button>
+        </div>
+
+        <div class="clock-wrap" aria-live="off">
+          <div class="clock-halo"></div>
+          <svg class="progress-ring" viewBox="0 0 300 300" aria-hidden="true">
+            <circle class="ring-track" cx="150" cy="150" r="137" />
+            <circle class="ring-progress" id="progress-ring" cx="150" cy="150" r="137" />
+          </svg>
+          <div class="clock-face">
+            <span class="time" id="time-display" role="timer" aria-label="25 minutes 00 seconds">25:00</span>
+            <span class="clock-caption" id="clock-caption">TIME TO FOCUS</span>
+          </div>
+        </div>
+
+        <p class="encouragement" id="encouragement">One thing at a time. You’ve got this.</p>
+        <button class="start-button" id="start-button"><span class="start-icon" id="start-icon">▶</span><span id="start-label">Start focus</span></button>
+        <button class="reset-button" id="reset-button">↺ <span>Reset timer</span></button>
+        <div class="session-actions"><button id="skip-button" class="text-action" type="button">Skip session <span>→</span></button><button id="install-button" class="install-button" type="button" hidden>Install app <span>↓</span></button></div>
+
+        <div class="session-count" aria-label="Completed focus sessions">
+          <span class="count-label">SESSIONS TODAY</span>
+          <span class="tomatoes" id="session-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="count-value"><strong id="session-count">0</strong> / 4</span>
+        </div>
+      </div>
+
+    </section>
+    <footer class="footer"><span>MADE FOR THE MOMENT YOU’RE IN</span><span class="footer-heart">♥</span></footer>
+  </main>
+
+  <dialog id="settings-dialog" class="settings-dialog">
+    <form method="dialog" id="settings-form">
+      <div class="dialog-heading"><div><span class="dialog-kicker">MAKE IT YOURS</span><h2>Timer settings</h2></div><button class="close-button" value="cancel" aria-label="Close settings">×</button></div>
+      <p class="dialog-copy">Choose a rhythm that works for you.</p>
+      <label class="setting-row">Focus session <span><input id="focus-setting" type="number" min="1" max="90" value="25"> <small>min</small></span></label>
+      <label class="setting-row">Short break <span><input id="short-setting" type="number" min="1" max="30" value="5"> <small>min</small></span></label>
+      <label class="setting-row">Long break <span><input id="long-setting" type="number" min="1" max="60" value="15"> <small>min</small></span></label>
+      <label class="setting-row toggle-row">Auto-start breaks <input id="auto-break-setting" type="checkbox"></label>
+      <label class="setting-row toggle-row">Auto-start focus sessions <input id="auto-focus-setting" type="checkbox"></label>
+      <div class="notification-row"><div><strong>Session reminders</strong><small>Get a notification when a timer ends.</small></div><button id="notification-button" class="notification-button" type="button">Enable</button></div>
+      <button class="save-button" id="save-settings" value="default">Save settings <span>→</span></button>
+    </form>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>

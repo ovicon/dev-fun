@@ -1,0 +1,16 @@
+{
+  "id": "./",
+  "name": "Little Pause — Pomodoro Timer",
+  "short_name": "Little Pause",
+  "description": "A calm Pomodoro timer for focused work and restorative breaks.",
+  "lang": "en",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f7f5f0",
+  "theme_color": "#f7f5f0",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
